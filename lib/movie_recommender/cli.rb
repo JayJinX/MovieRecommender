@@ -1,9 +1,14 @@
+require_relative "../../config/environment"
+
 class MovieRecommender::CLI
   attr_accessor :scraper
+  MAX_ITEMS = 10
 
   @@location = []
 
   def initialize
+    @page = 0
+
   end
 
   def start 
@@ -40,14 +45,20 @@ class MovieRecommender::CLI
 
   def list_movies
     scraper = MovieRecommender::Scraper.new
-    scraper.scrape_movies.each.with_index(1) do |movie, index|
+    scraper.scrape_movies
+    MovieRecommender::Movie.all.slice(@page, MAX_ITEMS).each.with_index(1) do |movie, index|
+      #slice(0,10); slice(10, 10); silce(20, 10)... @page = 0 each page @page increment 10
       puts "#{index}. #{movie.title}"
     end
     prompt_user
   end
+  
+  
 
   def prompt_user 
     puts "*************************************"
+    puts "Input n turn to next page of movie list"
+    puts "Input p turn to last page"
     puts "Enter the number of the movie you want to check the detail."
     puts "Input [exit] to quit."
     puts "*************************************"
@@ -72,6 +83,44 @@ class MovieRecommender::CLI
         puts "Enter the number of the movie you want to check the detail."
         puts "Input [exit] to quit."
         puts "*************************************"
+      elsif input.downcase == "n"
+        #41 total the last page will be 41 @page = 40 
+        if @page >= 0 && @page + 10 < MovieRecommender::Movie.all.size
+          @page = @page + 10
+          MovieRecommender::Movie.all.slice(@page, MAX_ITEMS).each.with_index(@page + 1) do |movie, index|
+            #slice(0,10); slice(10, 10); silce(20, 10)... @page = 0 each page @page increment 10
+            puts "#{index}. #{movie.title}"
+          end
+        elsif @page +10 > MovieRecommender::Movie.all.size && @page < MovieRecommender::Movie.all.size
+          MovieRecommender::Movie.all.slice(@page, MovieRecommender::Movie.all.size - @page).each.with_index(@page + 1) do |movie, index|
+            #slice(0,10); slice(10, 10); silce(20, 10)... @page = 0 each page @page increment 10
+            puts "#{index}. #{movie.title}"
+          end
+        else
+          puts "This is the end of the page"
+          MovieRecommender::Movie.all.slice(@page, MovieRecommender::Movie.all.size - @page).each.with_index(@page + 1) do |movie, index|
+            #slice(0,10); slice(10, 10); silce(20, 10)... @page = 0 each page @page increment 10
+            puts "#{index}. #{movie.title}"
+          end
+        end
+      
+      elsif input.downcase == "p"
+        if @page >=0
+          @page = @page -10
+          MovieRecommender::Movie.all.slice(@page, MAX_ITEMS).each.with_index(@page + 1) do |movie, index|
+            #slice(0,10); slice(10, 10); silce(20, 10)... @page = 0 each page @page increment 10
+            puts "#{index}. #{movie.title}"
+          end
+        else
+          @page = 0
+          MovieRecommender::Movie.all.slice(@page, MAX_ITEMS).each.with_index(@page + 1) do |movie, index|
+            #slice(0,10); slice(10, 10); silce(20, 10)... @page = 0 each page @page increment 10
+            puts "#{index}. #{movie.title}"
+          end
+          puts "This is the very first page."
+        end
+          
+
       elsif input.downcase == "exit"
         puts "See you next time."
         exit

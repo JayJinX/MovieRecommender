@@ -1,3 +1,5 @@
+require_relative "../../config/environment"
+
 class MovieRecommender::Movie
   attr_accessor :title, :url
 

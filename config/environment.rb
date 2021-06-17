@@ -3,5 +3,10 @@ require "nokogiri"
 require "open-uri"
 require 'pry'
 
-require_all "lib"
+require_relative "../lib/movie_recommender.rb"
+require_relative "../lib/movie_recommender/cli.rb"
+require_relative "../lib/movie_recommender/movie.rb"
+require_relative "../lib/movie_recommender/scraper.rb"
+require_relative "../lib/movie_recommender/version.rb"
+
 

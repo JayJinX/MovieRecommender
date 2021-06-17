@@ -1,3 +1,5 @@
+require_relative "../../config/environment"
+
 require "require_all"
 class MovieRecommender::Scraper
   attr_accessor :base_url, :html, :document, :description, :score
