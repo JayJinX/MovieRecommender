@@ -7,7 +7,7 @@ class MovieRecommender::Scraper
   def initialize
     location = MovieRecommender::CLI.all[1]
     postal_code = MovieRecommender::CLI.all[0]
-    @base_url = "https://www.imdb.com/"
+    @base_url = "https://www.imdb.com"
     @html = open("#{@base_url}/showtimes/location/#{location}/#{postal_code}")
     @document = Nokogiri::HTML(html)
   end
@@ -21,11 +21,10 @@ class MovieRecommender::Scraper
   end
 
   def scrape_details(url)
-    html = open("#{@base_url}/#{url}")
+    html = open("#{@base_url}/showtimes/#{url}")
     document = Nokogiri::HTML(html)
-    @score = document.css(".AggregateRatingButton__RatingScore-sc-1il8omz-1.fhMjqK").text.strip
-    description_row = document.css(".ipc-html-content.ipc-html-content--base").first.text.strip.split(".")
-    description_row.pop()
-    @description = description_row.join(".")
+    @score = document.css(".rating-rating").text.strip
+    
+    @description = document.css(".outline").text.strip
   end
 end
